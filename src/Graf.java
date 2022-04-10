@@ -188,7 +188,7 @@ public class Graf {
                 int kmin = Math.min(u, v);
                 int kmax = Math.max(u, v);
                 pocetVybranychHran++;
-                for (int j = 0; j < napovedy.size() - 1; j++) {
+                for (int j = 0; j < k.size(); j++) {
                     if (k.get(j) == kmax) {
                         k.set(j, kmin);
                     }
@@ -197,7 +197,7 @@ public class Graf {
         }
 
         for (int i = 0; i < kostra.size(); i++) {
-            kostra.get(i).vypisHranyBezCeny();
+            kostra.get(i).vypisHrany();
         }
 
         System.out.println(cena);
