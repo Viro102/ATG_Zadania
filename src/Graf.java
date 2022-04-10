@@ -129,39 +129,50 @@ public class Graf {
         return cesta;
     }
 
-    private void zoradHrany(String zoradenie) {
+    private void zoradHranyZostupne() {
         int n = this.hrany.size();
         boolean zmena;
         for (int i = 0; i < n - 1; i++) {
             zmena = false;
             for (int j = 0; j < n - i - 1; j++)
-                if (zoradenie.equals("vzostupne")) {
-                    if (this.hrany.get(j).getCenaHrany() > this.hrany.get(j + 1).getCenaHrany()) {
-                        // swap arr[j+1] and arr[j]
-                        Hrana temp = this.hrany.get(j);
-                        this.hrany.set(j, hrany.get(j + 1));
-                        this.hrany.set(j + 1, temp);
-                        zmena = true;
-                    }
-                } else if (zoradenie.equals("zostupne")) {
-                    if (this.hrany.get(j).getCenaHrany() < this.hrany.get(j + 1).getCenaHrany()) {
-                        Hrana temp = this.hrany.get(j);
-                        this.hrany.set(j, hrany.get(j + 1));
-                        this.hrany.set(j + 1, temp);
-                        zmena = true;
-                    }
-                } else {
-                    System.err.println("Zoradit sa da iba vzostupne alebo zostupne");
-                    break;
+                if (this.hrany.get(j).getCenaHrany() < this.hrany.get(j + 1).getCenaHrany()) {
+                    Hrana temp = this.hrany.get(j);
+                    this.hrany.set(j, hrany.get(j + 1));
+                    this.hrany.set(j + 1, temp);
+                    zmena = true;
                 }
+
             if (!zmena) {
                 break;
             }
         }
     }
 
+    /*
+     * bubble sort
+     */
+    private void zoradHranyVzostupne() {
+        int n = this.hrany.size();
+        boolean zmena;
+        for (int i = 0; i < n - 1; i++) {
+            zmena = false;
+            for (int j = 0; j < n - i - 1; j++)
+                if (this.hrany.get(j).getCenaHrany() > this.hrany.get(j + 1).getCenaHrany()) {
+                    Hrana temp = this.hrany.get(j);
+                    this.hrany.set(j, hrany.get(j + 1));
+                    this.hrany.set(j + 1, temp);
+                    zmena = true;
+                }
+
+            if (!zmena) {
+                break;
+            }
+        }
+
+    }
+
     public void kruskalov() {
-        zoradHrany("vzostupne");
+        zoradHranyVzostupne();
         ArrayList<Integer> k = new ArrayList<>();
         for (int i = 0; i < getPocetVrcholov() + 1; i++) {
             k.add(i);
