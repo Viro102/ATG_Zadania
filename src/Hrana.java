@@ -1,25 +1,20 @@
 public class Hrana {
 
-    private int zVrchol;
-    private int doVrchol;
+    private Vrchol zVrchol;
+    private Vrchol doVrchol;
     private int cena;
 
-    public Hrana(int zVrchol, int doVrchol, int cena) {
-        this.zVrchol = zVrchol;
-        this.doVrchol = doVrchol;
+    public Hrana(Vrchol vrcholZ, Vrchol vrcholDo, int cena) {
+        this.zVrchol = vrcholZ;
+        this.doVrchol = vrcholDo;
         this.cena = cena;
     }
 
-    public Hrana(int zVrchol, int doVrchol) {
-        this.zVrchol = zVrchol;
-        this.doVrchol = doVrchol;
-    }
-
-    public int getZaciatocnyVrchol() {
+    public Vrchol getZaciatocnyVrchol() {
         return this.zVrchol;
     }
 
-    public int getKoncovyVrhol() {
+    public Vrchol getKoncovyVrhol() {
         return this.doVrchol;
     }
 
@@ -28,10 +23,10 @@ public class Hrana {
     }
 
     public void vypisHrany() {
-        System.out.printf("{ %d, %d, %d }%n", zVrchol, doVrchol, cena);
+        System.out.printf("{ %d, %d, %d }%n", zVrchol.getCislo(), doVrchol.getCislo(), cena);
     }
 
     public void vypisHranyBezCeny() {
-        System.out.printf("{ %d, %d }%n", zVrchol, doVrchol);
+        System.out.printf("{ %d, %d }%n", zVrchol.getCislo(), doVrchol.getCislo());
     }
 }
