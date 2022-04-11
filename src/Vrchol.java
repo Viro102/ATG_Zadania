@@ -23,7 +23,7 @@ public class Vrchol {
     }
 
     public int getCislo() {
-        return cislo;
+        return this.cislo;
     }
 
     public ArrayList<Hrana> getSusedneHrany() {

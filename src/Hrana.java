@@ -23,10 +23,10 @@ public class Hrana {
     }
 
     public void vypisHrany() {
-        System.out.printf("{ %d, %d, %d }%n", zVrchol.getCislo(), doVrchol.getCislo(), cena);
+        System.out.printf("{ %d, %d, %d }%n", this.zVrchol.getCislo(), this.doVrchol.getCislo(), this.cena);
     }
 
     public void vypisHranyBezCeny() {
-        System.out.printf("{ %d, %d }%n", zVrchol.getCislo(), doVrchol.getCislo());
+        System.out.printf("{ %d, %d }%n", this.zVrchol.getCislo(), this.doVrchol.getCislo());
     }
 }

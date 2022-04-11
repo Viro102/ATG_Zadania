@@ -1,7 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -26,7 +25,7 @@ public class Graf {
     }
 
     public void nacitajGraf(String f) {
-        napovedy.add(0);
+        this.napovedy.add(0);
         try {
             File file = new File(f);
             Scanner s = new Scanner(file);
@@ -34,7 +33,7 @@ public class Graf {
             while (s.hasNext()) {
                 int z = s.nextInt();
                 while (aktRiadok != z) { // zistujem na ktorom riadku sa menia vrcholy
-                    napovedy.add(riadok);
+                    this.napovedy.add(this.riadok);
                     aktRiadok++;
                 }
 
@@ -43,22 +42,22 @@ public class Graf {
                 int cena = s.nextInt();
                 Hrana hrana = new Hrana(vrcholZ, vrcholDo, cena);
                 vrcholZ.pridajHranu(hrana);
-                hrany.add(hrana);
-                riadok++;
+                this.hrany.add(hrana);
+                this.riadok++;
             }
             s.close();
         } catch (FileNotFoundException e) {
             System.err.println("Subor neexistuje!");
         }
-        napovedy.add(riadok);
+        this.napovedy.add(this.riadok);
     }
 
     private void inicializujXaT() {
-        this.x = new int[napovedy.size()];
-        this.t = new int[napovedy.size()];
+        this.x = new int[this.napovedy.size()];
+        this.t = new int[this.napovedy.size()];
 
-        for (int i = 0; i < t.length; i++) {
-            t[i] = NEKONECNO;
+        for (int i = 0; i < this.t.length; i++) {
+            this.t[i] = NEKONECNO;
         }
     }
 
@@ -70,36 +69,36 @@ public class Graf {
     private int getRiadiaciVrchol() {
         int pozicia = 0;
         int minHodnota = NEKONECNO;
-        for (int i = 0; i < mnozinaE.size(); i++) {
-            int vrchol = mnozinaE.get(i);
-            if (t[vrchol] < minHodnota) {
-                minHodnota = t[vrchol];
+        for (int i = 0; i < this.mnozinaE.size(); i++) {
+            int vrchol = this.mnozinaE.get(i);
+            if (this.t[vrchol] < minHodnota) {
+                minHodnota = this.t[vrchol];
                 pozicia = i;
             }
         }
-        return mnozinaE.remove(pozicia);
+        return this.mnozinaE.remove(pozicia);
     }
 
     public void labelSet(int u, int v) {
-        inicializujXaT();
-        t[u] = 0;
-        mnozinaE.add(u);
-        while (!mnozinaE.isEmpty()) {
-            int riadiaciVrchol = getRiadiaciVrchol();
+        this.inicializujXaT();
+        this.t[u] = 0;
+        this.mnozinaE.add(u);
+        while (!this.mnozinaE.isEmpty()) {
+            int riadiaciVrchol = this.getRiadiaciVrchol();
             if (riadiaciVrchol == v) {
-                vytlacCestu(v);
+                this.vytlacCestu(v);
                 return;
             }
-            int zaciatok = napovedy.get(riadiaciVrchol - 1);
-            int koniec = napovedy.get(riadiaciVrchol);
+            int zaciatok = this.napovedy.get(riadiaciVrchol - 1);
+            int koniec = this.napovedy.get(riadiaciVrchol);
             for (int i = zaciatok; i < koniec; i++) {
-                int doVrcholu = hrany.get(i).getKoncovyVrhol().getCislo();
-                int cena = hrany.get(i).getCenaHrany();
-                if (this.t[doVrcholu] > t[riadiaciVrchol] + cena) {
-                    this.t[doVrcholu] = t[riadiaciVrchol] + cena;
+                int doVrcholu = this.hrany.get(i).getKoncovyVrhol().getCislo();
+                int cena = this.hrany.get(i).getCenaHrany();
+                if (this.t[doVrcholu] > this.t[riadiaciVrchol] + cena) {
+                    this.t[doVrcholu] = this.t[riadiaciVrchol] + cena;
                     this.x[doVrcholu] = riadiaciVrchol;
                     System.out.printf("Zlepsenie pri vrchole: %d na %d|%d%n", doVrcholu,
-                            t[riadiaciVrchol] + cena,
+                            this.t[riadiaciVrchol] + cena,
                             riadiaciVrchol);
                     this.mnozinaE.add(doVrcholu);
 
@@ -111,8 +110,8 @@ public class Graf {
     }
 
     private void vytlacCestu(int v) {
-        ArrayList<Integer> cesta = urobCestu(v);
-        System.out.printf("Cena: %d%n", t[v]);
+        ArrayList<Integer> cesta = this.urobCestu(v);
+        System.out.printf("Cena: %d%n", this.t[v]);
         StringBuilder sb = new StringBuilder();
 
         for (int i : cesta) {
@@ -133,62 +132,37 @@ public class Graf {
 
     private void zoradHrany(String zoradenie) {
         Comparator<Hrana> zoradPodlaCeny = ((o1, o2) -> o1.getCenaHrany().compareTo(o2.getCenaHrany()));
-        Collections.sort(hrany, zoradPodlaCeny);
+        Collections.sort(this.hrany, zoradPodlaCeny);
         if (zoradenie.equals("zostupne")) {
-            Collections.reverse(hrany);
+            Collections.reverse(this.hrany);
         }
     }
 
-    /*
-     * bubble sort
-     */
-    private void zoradHranyVzostupne() {
-        int n = this.hrany.size();
-        boolean zmena;
-        // for (int i = 0; i < n - 1; i++) {
-        // zmena = false;
-        // for (int j = 0; j < n - i - 1; j++)
-        // if (this.hrany.get(j).getCenaHrany() > this.hrany.get(j + 1).getCenaHrany())
-        // {
-        // Hrana temp = this.hrany.get(j);
-        // this.hrany.set(j, hrany.get(j + 1));
-        // this.hrany.set(j + 1, temp);
-        // zmena = true;
-        // }
-
-        // if (!zmena) {
-        // break;
-        // }
-        // }
-
-    }
-
     public void kruskalov() {
-        zoradHrany("vzostupne");
-        int[] k = new int[getVrcholy().size() + 1];
+        this.zoradHrany("vzostupne");
+        int[] k = new int[this.getVrcholy().size() + 1];
         for (int i = 0; i < k.length; i++) {
             k[i] = i;
         }
         ArrayList<Hrana> kostra = new ArrayList<>();
-        int pocetVrcholov = getVrcholy().size();
+        int pocetVrcholov = this.getVrcholy().size();
         int u = 0;
         int v = 0;
         int pocetVybranychHran = 0;
         int cena = 0;
-        while (!((pocetVybranychHran == pocetVrcholov - 1) || hrany.isEmpty())) {
-            u = hrany.getFirst().getZaciatocnyVrchol().getCislo();
-            v = hrany.getFirst().getKoncovyVrhol().getCislo();
-            cena += hrany.getFirst().getCenaHrany();
-            Hrana hrana = hrany.removeFirst();
+        while (!((pocetVybranychHran == pocetVrcholov - 1) || this.hrany.isEmpty())) {
+            u = this.hrany.getFirst().getZaciatocnyVrchol().getCislo();
+            v = this.hrany.getFirst().getKoncovyVrhol().getCislo();
+            cena += this.hrany.getFirst().getCenaHrany();
+            Hrana hrana = this.hrany.removeFirst();
             if (k[u] != k[v]) {
                 kostra.add(hrana);
                 int kmin = Math.min(k[u], k[v]);
                 int kmax = Math.max(k[u], k[v]);
-                int temp = k[kmax];
                 pocetVybranychHran++;
-                for (int j = 0; j < k.length; j++) {
-                    if (k[j] == temp) {
-                        k[j] = k[kmin];
+                for (int j = 0; j < pocetVrcholov; j++) {
+                    if (k[j] == kmax) {
+                        k[j] = kmin;
                     }
                 }
             }
@@ -203,15 +177,15 @@ public class Graf {
 
     private ArrayList<Integer> getVrcholy() {
         ArrayList<Integer> unikatne = new ArrayList<>();
-        for (Hrana h : hrany) {
+        for (Hrana h : this.hrany) {
             this.vrcholy.add(h.getKoncovyVrhol());
             this.vrcholy.add(h.getZaciatocnyVrchol());
 
         }
 
-        for (int i = 0; i < vrcholy.size(); i++) {
-            if (!unikatne.contains(vrcholy.get(i).getCislo())) {
-                unikatne.add(vrcholy.get(i).getCislo());
+        for (int i = 0; i < this.vrcholy.size(); i++) {
+            if (!unikatne.contains(this.vrcholy.get(i).getCislo())) {
+                unikatne.add(this.vrcholy.get(i).getCislo());
             }
         }
 
