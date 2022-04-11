@@ -1,11 +1,11 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.Scanner;
-import java.util.Set;
 
 public class Graf {
     private int[] x;
@@ -13,12 +13,14 @@ public class Graf {
     private ArrayList<Integer> mnozinaE;
     private ArrayList<Integer> napovedy;
     private LinkedList<Hrana> hrany;
+    private ArrayList<Vrchol> vrcholy;
     private int riadok;
     private static final int NEKONECNO = 1000000;
 
     public Graf() {
         this.riadok = 0;
         this.mnozinaE = new ArrayList<>();
+        this.vrcholy = new ArrayList<>();
         this.napovedy = new ArrayList<>();
         this.hrany = new LinkedList<>();
     }
@@ -129,22 +131,11 @@ public class Graf {
         return cesta;
     }
 
-    private void zoradHranyZostupne() {
-        int n = this.hrany.size();
-        boolean zmena;
-        for (int i = 0; i < n - 1; i++) {
-            zmena = false;
-            for (int j = 0; j < n - i - 1; j++)
-                if (this.hrany.get(j).getCenaHrany() < this.hrany.get(j + 1).getCenaHrany()) {
-                    Hrana temp = this.hrany.get(j);
-                    this.hrany.set(j, hrany.get(j + 1));
-                    this.hrany.set(j + 1, temp);
-                    zmena = true;
-                }
-
-            if (!zmena) {
-                break;
-            }
+    private void zoradHrany(String zoradenie) {
+        Comparator<Hrana> zoradPodlaCeny = ((o1, o2) -> o1.getCenaHrany().compareTo(o2.getCenaHrany()));
+        Collections.sort(hrany, zoradPodlaCeny);
+        if (zoradenie.equals("zostupne")) {
+            Collections.reverse(hrany);
         }
     }
 
@@ -154,31 +145,32 @@ public class Graf {
     private void zoradHranyVzostupne() {
         int n = this.hrany.size();
         boolean zmena;
-        for (int i = 0; i < n - 1; i++) {
-            zmena = false;
-            for (int j = 0; j < n - i - 1; j++)
-                if (this.hrany.get(j).getCenaHrany() > this.hrany.get(j + 1).getCenaHrany()) {
-                    Hrana temp = this.hrany.get(j);
-                    this.hrany.set(j, hrany.get(j + 1));
-                    this.hrany.set(j + 1, temp);
-                    zmena = true;
-                }
+        // for (int i = 0; i < n - 1; i++) {
+        // zmena = false;
+        // for (int j = 0; j < n - i - 1; j++)
+        // if (this.hrany.get(j).getCenaHrany() > this.hrany.get(j + 1).getCenaHrany())
+        // {
+        // Hrana temp = this.hrany.get(j);
+        // this.hrany.set(j, hrany.get(j + 1));
+        // this.hrany.set(j + 1, temp);
+        // zmena = true;
+        // }
 
-            if (!zmena) {
-                break;
-            }
-        }
+        // if (!zmena) {
+        // break;
+        // }
+        // }
 
     }
 
     public void kruskalov() {
-        zoradHranyVzostupne();
-        ArrayList<Integer> k = new ArrayList<>();
-        for (int i = 0; i < getPocetVrcholov() + 1; i++) {
-            k.add(i);
+        zoradHrany("vzostupne");
+        int[] k = new int[getVrcholy().size() + 1];
+        for (int i = 0; i < k.length; i++) {
+            k[i] = i;
         }
         ArrayList<Hrana> kostra = new ArrayList<>();
-        int pocetVrcholov = getPocetVrcholov();
+        int pocetVrcholov = getVrcholy().size();
         int u = 0;
         int v = 0;
         int pocetVybranychHran = 0;
@@ -187,14 +179,16 @@ public class Graf {
             u = hrany.getFirst().getZaciatocnyVrchol().getCislo();
             v = hrany.getFirst().getKoncovyVrhol().getCislo();
             cena += hrany.getFirst().getCenaHrany();
-            if (!k.get(u).equals(k.get(v))) {
-                kostra.add(hrany.removeFirst());
-                int kmin = Math.min(u, v);
-                int kmax = Math.max(u, v);
+            Hrana hrana = hrany.removeFirst();
+            if (k[u] != k[v]) {
+                kostra.add(hrana);
+                int kmin = Math.min(k[u], k[v]);
+                int kmax = Math.max(k[u], k[v]);
+                int temp = k[kmax];
                 pocetVybranychHran++;
-                for (int j = 0; j < k.size(); j++) {
-                    if (k.get(j) == kmax) {
-                        k.set(j, kmin);
+                for (int j = 0; j < k.length; j++) {
+                    if (k[j] == temp) {
+                        k[j] = k[kmin];
                     }
                 }
             }
@@ -207,13 +201,21 @@ public class Graf {
         System.out.println(cena);
     }
 
-    private int getPocetVrcholov() {
-        Set<Integer> vrcholy = new HashSet<>();
+    private ArrayList<Integer> getVrcholy() {
+        ArrayList<Integer> unikatne = new ArrayList<>();
         for (Hrana h : hrany) {
-            vrcholy.add(h.getKoncovyVrhol().getCislo());
-            vrcholy.add(h.getZaciatocnyVrchol().getCislo());
+            this.vrcholy.add(h.getKoncovyVrhol());
+            this.vrcholy.add(h.getZaciatocnyVrchol());
 
         }
-        return vrcholy.size();
+
+        for (int i = 0; i < vrcholy.size(); i++) {
+            if (!unikatne.contains(vrcholy.get(i).getCislo())) {
+                unikatne.add(vrcholy.get(i).getCislo());
+            }
+        }
+
+        return unikatne;
     }
+
 }

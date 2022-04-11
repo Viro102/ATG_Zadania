@@ -18,7 +18,7 @@ public class Hrana {
         return this.doVrchol;
     }
 
-    public int getCenaHrany() {
+    public Integer getCenaHrany() {
         return this.cena;
     }
 
