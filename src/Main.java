@@ -3,8 +3,10 @@ public class Main {
         Graf g = new Graf();
         // g.nacitajGraf("velky_graf.txt");
         // g.labelSet(63454, 1320);
-        g.nacitajGraf("graf2.txt");
-        // g.labelSet(4, 7);
-        g.kruskalov();
+        g.nacitajGraf("grafy/graf.txt");
+        // g.labelSet(4, 7);c
+        // g.kruskalov("vzostupne");
+        g.vypisVrcholy();
+        // g.monotonneOcislovanie();
     }
 }

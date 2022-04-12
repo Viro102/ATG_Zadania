@@ -30,4 +30,10 @@ public class Vrchol {
         return this.susedneHrany;
     }
 
+    public void vypisSusedneHrany() {
+        for (Hrana v : susedneHrany) {
+            v.vypisHrany();
+        }
+    }
+
 }

@@ -42,6 +42,7 @@ public class Graf {
                 int cena = s.nextInt();
                 Hrana hrana = new Hrana(vrcholZ, vrcholDo, cena);
                 vrcholZ.pridajHranu(hrana);
+                this.vrcholy.add(vrcholZ);
                 this.hrany.add(hrana);
                 this.riadok++;
             }
@@ -138,8 +139,8 @@ public class Graf {
         }
     }
 
-    public void kruskalov() {
-        this.zoradHrany("vzostupne");
+    public void kruskalov(String typKostry) {
+        this.zoradHrany(typKostry);
         int[] k = new int[this.getVrcholy().size() + 1];
         for (int i = 0; i < k.length; i++) {
             k[i] = i;
@@ -177,19 +178,41 @@ public class Graf {
 
     private ArrayList<Integer> getVrcholy() {
         ArrayList<Integer> unikatne = new ArrayList<>();
+        ArrayList<Vrchol> temp = new ArrayList<>();
         for (Hrana h : this.hrany) {
-            this.vrcholy.add(h.getKoncovyVrhol());
-            this.vrcholy.add(h.getZaciatocnyVrchol());
+            temp.add(h.getKoncovyVrhol());
+            temp.add(h.getZaciatocnyVrchol());
 
         }
 
-        for (int i = 0; i < this.vrcholy.size(); i++) {
-            if (!unikatne.contains(this.vrcholy.get(i).getCislo())) {
-                unikatne.add(this.vrcholy.get(i).getCislo());
+        for (int i = 0; i < temp.size(); i++) {
+            if (!unikatne.contains(temp.get(i).getCislo())) {
+                unikatne.add(temp.get(i).getCislo());
             }
         }
 
         return unikatne;
+    }
+
+    public void monotonneOcislovanie() {
+        int pocetVrcholov = getVrcholy().size();
+        int[] ideg = new int[pocetVrcholov];
+        int[] d = new int[pocetVrcholov];
+        for (int v = 0; v < pocetVrcholov; v++) {
+            d[v] = ideg[v];
+        }
+    }
+
+    public void vypisVrcholy() {
+        for (int i = 0; i < this.vrcholy.size(); i++) {
+            int cislo = this.vrcholy.get(i).getCislo();
+            var hrany = this.vrcholy.get(i).getSusedneHrany();
+            System.out.println("Cislo vrchola je " + cislo + " a incidentne hrany su: ");
+            // hrany.get(i).vypisHrany();
+        }
+        for (int i = 0; i < hrany.size(); i++) {
+            hrany.get(i).vypisHrany();
+        }
     }
 
 }
