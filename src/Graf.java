@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -11,18 +12,18 @@ public class Graf {
     private int[] t;
     private ArrayList<Integer> mnozinaE;
     private ArrayList<Integer> napovedy;
-    private LinkedList<Hrana> hrany;
-    private ArrayList<Vrchol> vrcholy;
+    private Hrana[] hrany;
     private static final int NEKONECNO = 1000000;
 
     public Graf() {
         this.mnozinaE = new ArrayList<>();
-        this.vrcholy = new ArrayList<>();
         this.napovedy = new ArrayList<>();
-        this.hrany = new LinkedList<>();
     }
 
     public void nacitajGraf(String f) {
+        ArrayList<Integer> zVrchol = new ArrayList<>();
+        ArrayList<Integer> doVrcholu = new ArrayList<>();
+        ArrayList<Integer> ceny = new ArrayList<>();
         int riadok = 0;
         this.napovedy.add(0);
         try {
@@ -35,14 +36,9 @@ public class Graf {
                     this.napovedy.add(riadok);
                     aktRiadok++;
                 }
-
-                Vrchol vrcholZ = new Vrchol(z);
-                Vrchol vrcholDo = new Vrchol(s.nextInt());
-                int cena = s.nextInt();
-                Hrana hrana = new Hrana(vrcholZ, vrcholDo, cena);
-                vrcholZ.pridajHranu(hrana);
-                this.vrcholy.add(vrcholZ);
-                this.hrany.add(hrana);
+                zVrchol.add(z);
+                doVrcholu.add(s.nextInt());
+                ceny.add(s.nextInt());
                 riadok++;
             }
             s.close();
@@ -50,6 +46,11 @@ public class Graf {
             System.err.println("Subor neexistuje!");
         }
         this.napovedy.add(riadok);
+
+        this.hrany = new Hrana[riadok];
+        for (int i = 0; i < riadok; i++) {
+            hrany[i] = new Hrana(new Vrchol(zVrchol.get(i)), new Vrchol(doVrcholu.get(i)), ceny.get(i));
+        }
     }
 
     private void inicializujXaT() {
@@ -92,8 +93,8 @@ public class Graf {
             int zaciatok = this.napovedy.get(riadiaciVrchol - 1);
             int koniec = this.napovedy.get(riadiaciVrchol);
             for (int i = zaciatok; i < koniec; i++) {
-                int doVrcholu = this.hrany.get(i).getKoncovyVrhol().getCislo();
-                int cena = this.hrany.get(i).getCenaHrany();
+                int doVrcholu = this.hrany[i].getKoncovyVrhol().getCislo();
+                int cena = this.hrany[i].getCenaHrany();
                 if (this.t[doVrcholu] > this.t[riadiaciVrchol] + cena) {
                     this.t[doVrcholu] = this.t[riadiaciVrchol] + cena;
                     this.x[doVrcholu] = riadiaciVrchol;
@@ -132,14 +133,18 @@ public class Graf {
 
     private void zoradHrany(String zoradenie) {
         Comparator<Hrana> zoradPodlaCeny = ((o1, o2) -> o1.getCenaHrany().compareTo(o2.getCenaHrany()));
-        Collections.sort(this.hrany, zoradPodlaCeny);
+        Arrays.sort(this.hrany, zoradPodlaCeny);
         if (zoradenie.equals("zostupne")) {
-            Collections.reverse(this.hrany);
+            Collections.reverse(Arrays.asList(this.hrany));
         }
     }
 
     public void kruskalov(String typKostry) {
         this.zoradHrany(typKostry);
+        LinkedList<Hrana> postupnostP = new LinkedList<>();
+        for (int i = 0; i < this.hrany.length; i++) {
+            postupnostP.add(this.hrany[i]);
+        }
         int[] k = new int[this.getVrcholy().size() + 1];
         for (int i = 0; i < k.length; i++) {
             k[i] = i;
@@ -150,11 +155,11 @@ public class Graf {
         int v = 0;
         int pocetVybranychHran = 0;
         int cena = 0;
-        while (!((pocetVybranychHran == pocetVrcholov - 1) || this.hrany.isEmpty())) {
-            u = this.hrany.getFirst().getZaciatocnyVrchol().getCislo();
-            v = this.hrany.getFirst().getKoncovyVrhol().getCislo();
-            cena += this.hrany.getFirst().getCenaHrany();
-            Hrana hrana = this.hrany.removeFirst();
+        while (!((pocetVybranychHran == pocetVrcholov - 1) || postupnostP.isEmpty())) {
+            u = postupnostP.getFirst().getZaciatocnyVrchol().getCislo();
+            v = postupnostP.getFirst().getKoncovyVrhol().getCislo();
+            cena += postupnostP.getFirst().getCenaHrany();
+            Hrana hrana = postupnostP.removeFirst();
             if (k[u] != k[v]) {
                 kostra.add(hrana);
                 int kmin = Math.min(k[u], k[v]);
@@ -190,6 +195,8 @@ public class Graf {
             }
         }
 
+        Collections.sort(unikatne);
+
         return unikatne;
     }
 
@@ -203,12 +210,6 @@ public class Graf {
     }
 
     public void vypisVrcholy() {
-        for (int i = 0; i < this.vrcholy.size(); i++) {
-            int cislo = this.vrcholy.get(i).getCislo();
-            System.out.println("Cislo vrchola je " + cislo + " a incidentne hrany su: ");
-            this.vrcholy.get(i).vypisSusedneHrany();
-        }
-
     }
 
 }
