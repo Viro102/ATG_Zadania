@@ -13,11 +13,9 @@ public class Graf {
     private ArrayList<Integer> napovedy;
     private LinkedList<Hrana> hrany;
     private ArrayList<Vrchol> vrcholy;
-    private int riadok;
     private static final int NEKONECNO = 1000000;
 
     public Graf() {
-        this.riadok = 0;
         this.mnozinaE = new ArrayList<>();
         this.vrcholy = new ArrayList<>();
         this.napovedy = new ArrayList<>();
@@ -25,6 +23,7 @@ public class Graf {
     }
 
     public void nacitajGraf(String f) {
+        int riadok = 0;
         this.napovedy.add(0);
         try {
             File file = new File(f);
@@ -33,7 +32,7 @@ public class Graf {
             while (s.hasNext()) {
                 int z = s.nextInt();
                 while (aktRiadok != z) { // zistujem na ktorom riadku sa menia vrcholy
-                    this.napovedy.add(this.riadok);
+                    this.napovedy.add(riadok);
                     aktRiadok++;
                 }
 
@@ -44,13 +43,13 @@ public class Graf {
                 vrcholZ.pridajHranu(hrana);
                 this.vrcholy.add(vrcholZ);
                 this.hrany.add(hrana);
-                this.riadok++;
+                riadok++;
             }
             s.close();
         } catch (FileNotFoundException e) {
             System.err.println("Subor neexistuje!");
         }
-        this.napovedy.add(this.riadok);
+        this.napovedy.add(riadok);
     }
 
     private void inicializujXaT() {
@@ -206,13 +205,10 @@ public class Graf {
     public void vypisVrcholy() {
         for (int i = 0; i < this.vrcholy.size(); i++) {
             int cislo = this.vrcholy.get(i).getCislo();
-            var hrany = this.vrcholy.get(i).getSusedneHrany();
             System.out.println("Cislo vrchola je " + cislo + " a incidentne hrany su: ");
-            // hrany.get(i).vypisHrany();
+            this.vrcholy.get(i).vypisSusedneHrany();
         }
-        for (int i = 0; i < hrany.size(); i++) {
-            hrany.get(i).vypisHrany();
-        }
+
     }
 
 }

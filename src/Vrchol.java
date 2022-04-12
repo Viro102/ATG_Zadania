@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.List;
 
 public class Vrchol {
     private ArrayList<Hrana> susedneHrany;
@@ -26,7 +27,7 @@ public class Vrchol {
         return this.cislo;
     }
 
-    public ArrayList<Hrana> getSusedneHrany() {
+    public List<Hrana> getSusedneHrany() {
         return this.susedneHrany;
     }
 
